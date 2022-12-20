@@ -1,6 +1,6 @@
 # org-searcher
 
-full text search for org files.
+Full text search for org files powered by ivy.
 
 # Summary
 This package provides a function `org-searcher-search-view' which utilizes ivy to
