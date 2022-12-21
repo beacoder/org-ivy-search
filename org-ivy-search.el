@@ -119,68 +119,68 @@ Otherwise, get the symbol at point, as a string."
       (progn
         ;; use fuzzy matching
         (setq string (replace-regexp-in-string " +" ".*" string))
-        (catch 'exit
-          (setq files (org-agenda-files))
-          ;; Uniquify files.  However, let `org-check-agenda-file' handle non-existent ones.
-          (setq files (cl-remove-duplicates
-                       (append files org-agenda-text-search-extra-files)
-                       :test (lambda (a b)
-                               (and (file-exists-p a)
-                                    (file-exists-p b)
-                                    (file-equal-p a b))))
-                rtnall nil
-                index 0
-                org-ivy-search-index-to-item-alist nil)
-          ;; loop agenda files to find matched one
-          (while (setq file (pop files))
-            (setq ee nil)
-            (catch 'nextfile
-              (org-check-agenda-file file)
-              ;; search matched text
-              (with-temp-buffer
-                (insert-file-contents-literally file)
-                (org-mode)
-                (with-syntax-table (org-search-syntax-table)
-                  (let ((case-fold-search t))
-                    (widen)
-                    (goto-char (point-min))
-                    (unless (or (org-at-heading-p)
-                                (outline-next-heading))
-                      (throw 'nextfile t))
-                    (goto-char (max (point-min) (1- (point))))
-                    ;; real match happens here
-                    (while (re-search-forward string nil t)
-                      (org-back-to-heading t)
-                      (while (and (not (zerop org-agenda-search-view-max-outline-level))
-                                  (> (org-reduced-level (org-outline-level))
-                                     org-agenda-search-view-max-outline-level)
-                                  (forward-line -1)
-                                  (org-back-to-heading t)))
-                      (skip-chars-forward "* ")
-                      (setq beg (point-at-bol)
-                            beg1 (point)
-                            end (progn
-                                  (outline-next-heading)
-                                  (while (and (not (zerop org-agenda-search-view-max-outline-level))
-                                              (> (org-reduced-level (org-outline-level))
-                                                 org-agenda-search-view-max-outline-level)
-                                              (forward-line 1)
-                                              (outline-next-heading)))
-                                  (point)))
-                      (goto-char beg)
-                      ;; save found text and its location
-                      (setq txt
-                            (propertize (buffer-substring-no-properties beg1 (point-at-eol))
-                                        'location (format "%s:%d" file (line-number-at-pos beg))))
-                      ;; save in map
-                      (push (cons index txt) org-ivy-search-index-to-item-alist)
-                      ;; save as return value
-                      (push txt ee)
-                      (goto-char (1- end))
-                      (setq index (1+ index)))))))
-            (setq rtn (nreverse ee))
-            (setq rtnall (append rtnall rtn)))
-          rtnall))))
+        (let (files rtnall index ivy-search-index-to-item-alist
+                    file ee beg beg1 end txt rtn)
+          (catch 'exit
+            (setq files (org-agenda-files))
+            ;; Uniquify files.  However, let `org-check-agenda-file' handle non-existent ones.
+            (setq files (cl-remove-duplicates
+                         (append files org-agenda-text-search-extra-files)
+                         :test (lambda (a b)
+                                 (and (file-exists-p a)
+                                      (file-exists-p b)
+                                      (file-equal-p a b))))
+                  rtnall nil index 0 org-ivy-search-index-to-item-alist nil)
+            ;; loop agenda files to find matched one
+            (while (setq file (pop files))
+              (setq ee nil)
+              (catch 'nextfile
+                (org-check-agenda-file file)
+                ;; search matched text
+                (with-temp-buffer
+                  (insert-file-contents-literally file)
+                  (org-mode)
+                  (with-syntax-table (org-search-syntax-table)
+                    (let ((case-fold-search t))
+                      (widen)
+                      (goto-char (point-min))
+                      (unless (or (org-at-heading-p)
+                                  (outline-next-heading))
+                        (throw 'nextfile t))
+                      (goto-char (max (point-min) (1- (point))))
+                      ;; real match happens here
+                      (while (re-search-forward string nil t)
+                        (org-back-to-heading t)
+                        (while (and (not (zerop org-agenda-search-view-max-outline-level))
+                                    (> (org-reduced-level (org-outline-level))
+                                       org-agenda-search-view-max-outline-level)
+                                    (forward-line -1)
+                                    (org-back-to-heading t)))
+                        (skip-chars-forward "* ")
+                        (setq beg (point-at-bol)
+                              beg1 (point)
+                              end (progn
+                                    (outline-next-heading)
+                                    (while (and (not (zerop org-agenda-search-view-max-outline-level))
+                                                (> (org-reduced-level (org-outline-level))
+                                                   org-agenda-search-view-max-outline-level)
+                                                (forward-line 1)
+                                                (outline-next-heading)))
+                                    (point)))
+                        (goto-char beg)
+                        ;; save found text and its location
+                        (setq txt
+                              (propertize (buffer-substring-no-properties beg1 (point-at-eol))
+                                          'location (format "%s:%d" file (line-number-at-pos beg))))
+                        ;; save in map
+                        (push (cons index txt) org-ivy-search-index-to-item-alist)
+                        ;; save as return value
+                        (push txt ee)
+                        (goto-char (1- end))
+                        (setq index (1+ index)))))))
+              (setq rtn (nreverse ee))
+              (setq rtnall (append rtnall rtn)))
+            rtnall)))))
 
 (defun org-ivy-search-iterate-action (&optional arg)
   "Preview agenda content while looping agenda, ignore ARG."
