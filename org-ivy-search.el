@@ -1,9 +1,9 @@
-;;; org-searcher.el --- Full text search for org files powered by ivy -*- lexical-binding: t; -*-
+;;; org-ivy-search.el --- Full text search for org files powered by ivy -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 Huming Chen
 
 ;; Author: Huming Chen <chenhuming@gmail.com>
-;; URL: https://github.com/beacoder/org-searcher
+;; URL: https://github.com/beacoder/org-ivy-search
 ;; Version: 0.1
 ;; Created: 2021-03-12
 ;; Keywords: convenience, tool, org
@@ -29,7 +29,7 @@
 ;; Full text search for org files powered by ivy
 ;;
 ;; Below are commands you can use:
-;; `org-searcher-search-view'
+;; `org-ivy-search-search-view'
 
 ;;; Code:
 
@@ -41,27 +41,27 @@
 ;; Definition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar org-searcher-index-to-item-alist nil
+(defvar org-ivy-search-index-to-item-alist nil
   "The alist to store mapping from ivy-index to agenda-item.")
 
-(defvar org-searcher-window-configuration nil
+(defvar org-ivy-search-window-configuration nil
   "The window configuration to be restored upon closing the buffer.")
 
-(defvar org-searcher-selected-window nil
+(defvar org-ivy-search-selected-window nil
   "The currently selected window.")
 
-(defvar org-searcher-created-buffers ()
+(defvar org-ivy-search-created-buffers ()
   "List of newly created buffers.")
 
-(defvar org-searcher-previous-buffers ()
-  "List of buffers created before opening org-searcher.")
+(defvar org-ivy-search-previous-buffers ()
+  "List of buffers created before opening org-ivy-search.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; steal from ag/dwim-at-point
-(defun org-searcher--dwim-at-point ()
+(defun org-ivy-search--dwim-at-point ()
   "If there's an active selection, return that.
 Otherwise, get the symbol at point, as a string."
   (cond ((use-region-p)
@@ -75,23 +75,23 @@ Otherwise, get the symbol at point, as a string."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
-(defun org-searcher-search-view (&optional keyword)
+(defun org-ivy-search-search-view (&optional keyword)
   "Incremental `org-search-view' with initial-input KEYWORD."
-  (interactive (list (org-searcher--dwim-at-point)))
-  (let ((org-searcher-window-configuration (current-window-configuration))
-        (org-searcher-selected-window (frame-selected-window))
-        (org-searcher-created-buffers ())
-        (org-searcher-previous-buffers (buffer-list)))
-    (advice-add 'ivy-previous-line :after #'org-searcher-iterate-action)
-    (advice-add 'ivy-next-line :after #'org-searcher-iterate-action)
-    (add-hook 'minibuffer-exit-hook #'org-searcher-quit)
-    (ivy-read "Org agenda search: " #'org-searcher-agenda-search-function
+  (interactive (list (org-ivy-search--dwim-at-point)))
+  (let ((org-ivy-search-window-configuration (current-window-configuration))
+        (org-ivy-search-selected-window (frame-selected-window))
+        (org-ivy-search-created-buffers ())
+        (org-ivy-search-previous-buffers (buffer-list)))
+    (advice-add 'ivy-previous-line :after #'org-ivy-search-iterate-action)
+    (advice-add 'ivy-next-line :after #'org-ivy-search-iterate-action)
+    (add-hook 'minibuffer-exit-hook #'org-ivy-search-quit)
+    (ivy-read "Org agenda search: " #'org-ivy-search-agenda-search-function
               :initial-input keyword
               :dynamic-collection t
-              :caller #'org-searcher-search-view
-              :action #'org-searcher-search-action)))
+              :caller #'org-ivy-search-search-view
+              :action #'org-ivy-search-search-action)))
 
-(defun org-searcher-visit-agenda-location (agenda-location)
+(defun org-ivy-search-visit-agenda-location (agenda-location)
   "Visit agenda location AGENDA-LOCATION."
   (when-let ((temp-split (split-string agenda-location ":"))
              (file-name (car temp-split))
@@ -104,16 +104,16 @@ Otherwise, get the symbol at point, as a string."
                       (beacon-blink))
     (unless (member
              (buffer-name (window-buffer))
-             (mapcar (function buffer-name) org-searcher-previous-buffers))
-      (add-to-list 'org-searcher-created-buffers (window-buffer)))))
+             (mapcar (function buffer-name) org-ivy-search-previous-buffers))
+      (add-to-list 'org-ivy-search-created-buffers (window-buffer)))))
 
-(defun org-searcher-search-action (agenda-location)
+(defun org-ivy-search-search-action (agenda-location)
   "Go to AGENDA-LOCATION."
   (when-let ((location (get-text-property 0 'location agenda-location)))
-    (org-searcher-visit-agenda-location location)))
+    (org-ivy-search-visit-agenda-location location)))
 
 ;; modified from org-search-view
-(defun org-searcher-agenda-search-function (string)
+(defun org-ivy-search-agenda-search-function (string)
   "Show all entries in agenda files that contain STRING."
   (or (ivy-more-chars)
       (progn
@@ -130,7 +130,7 @@ Otherwise, get the symbol at point, as a string."
                                     (file-equal-p a b))))
                 rtnall nil
                 index 0
-                org-searcher-index-to-item-alist nil)
+                org-ivy-search-index-to-item-alist nil)
           ;; loop agenda files to find matched one
           (while (setq file (pop files))
             (setq ee nil)
@@ -173,7 +173,7 @@ Otherwise, get the symbol at point, as a string."
                             (propertize (buffer-substring-no-properties beg1 (point-at-eol))
                                         'location (format "%s:%d" file (line-number-at-pos beg))))
                       ;; save in map
-                      (push (cons index txt) org-searcher-index-to-item-alist)
+                      (push (cons index txt) org-ivy-search-index-to-item-alist)
                       ;; save as return value
                       (push txt ee)
                       (goto-char (1- end))
@@ -182,28 +182,28 @@ Otherwise, get the symbol at point, as a string."
             (setq rtnall (append rtnall rtn)))
           rtnall))))
 
-(defun org-searcher-iterate-action (&optional arg)
+(defun org-ivy-search-iterate-action (&optional arg)
   "Preview agenda content while looping agenda, ignore ARG."
   (save-selected-window
     (when-let ((ignore arg)
-               (is-map-valid org-searcher-index-to-item-alist)
-               (item-found (assoc ivy--index org-searcher-index-to-item-alist))
+               (is-map-valid org-ivy-search-index-to-item-alist)
+               (item-found (assoc ivy--index org-ivy-search-index-to-item-alist))
                (item-content (cdr item-found))
                (location (get-text-property 0 'location item-content)))
-      (org-searcher-visit-agenda-location location))))
+      (org-ivy-search-visit-agenda-location location))))
 
-(defun org-searcher-quit ()
-  "Quit `org-searcher'."
-  (let ((configuration org-searcher-window-configuration)
-        (selected-window org-searcher-selected-window))
-    (advice-remove 'ivy-previous-line #'org-searcher-iterate-action)
-    (advice-remove 'ivy-next-line #'org-searcher-iterate-action)
-    (remove-hook 'minibuffer-exit-hook #'org-searcher-quit)
+(defun org-ivy-search-quit ()
+  "Quit `org-ivy-search'."
+  (let ((configuration org-ivy-search-window-configuration)
+        (selected-window org-ivy-search-selected-window))
+    (advice-remove 'ivy-previous-line #'org-ivy-search-iterate-action)
+    (advice-remove 'ivy-next-line #'org-ivy-search-iterate-action)
+    (remove-hook 'minibuffer-exit-hook #'org-ivy-search-quit)
     (set-window-configuration configuration)
     (select-window selected-window)
-    (mapc 'kill-buffer-if-not-modified org-searcher-created-buffers)
-    (setq org-searcher-created-buffers ())))
+    (mapc 'kill-buffer-if-not-modified org-ivy-search-created-buffers)
+    (setq org-ivy-search-created-buffers ())))
 
 
-(provide 'org-searcher)
-;;; org-searcher.el ends here
+(provide 'org-ivy-search)
+;;; org-ivy-search.el ends here
