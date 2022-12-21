@@ -29,7 +29,7 @@
 ;; Full text search for org files powered by ivy
 ;;
 ;; Below are commands you can use:
-;; `org-ivy-search-search-view'
+;; `org-ivy-search-view'
 
 ;;; Code:
 
@@ -75,7 +75,7 @@ Otherwise, get the symbol at point, as a string."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
-(defun org-ivy-search-search-view (&optional keyword)
+(defun org-ivy-search-view (&optional keyword)
   "Incremental `org-search-view' with initial-input KEYWORD."
   (interactive (list (org-ivy-search--dwim-at-point)))
   (let ((org-ivy-search-window-configuration (current-window-configuration))
@@ -88,8 +88,8 @@ Otherwise, get the symbol at point, as a string."
     (ivy-read "Org agenda search: " #'org-ivy-search-agenda-search-function
               :initial-input keyword
               :dynamic-collection t
-              :caller #'org-ivy-search-search-view
-              :action #'org-ivy-search-search-action)))
+              :caller #'org-ivy-search-view
+              :action #'org-ivy-search-action)))
 
 (defun org-ivy-search-visit-agenda-location (agenda-location)
   "Visit agenda location AGENDA-LOCATION."
@@ -107,7 +107,7 @@ Otherwise, get the symbol at point, as a string."
              (mapcar (function buffer-name) org-ivy-search-previous-buffers))
       (add-to-list 'org-ivy-search-created-buffers (window-buffer)))))
 
-(defun org-ivy-search-search-action (agenda-location)
+(defun org-ivy-search-action (agenda-location)
   "Go to AGENDA-LOCATION."
   (when-let ((location (get-text-property 0 'location agenda-location)))
     (org-ivy-search-visit-agenda-location location)))
