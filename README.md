@@ -1,16 +1,16 @@
-# org-searcher
+# org-ivy-search
 
 Full text search for org files powered by ivy.
 
 # Summary
-This package provides a function `org-searcher-search-view' which utilizes ivy to
+This package provides a function `org-ivy-search-view' which utilizes ivy to
 do a full text search over org files.
 
 # Usage
 
 ```lisp
     (setq org-agenda-files '("~/workspace/org/"))
-    (global-set-key (kbd "C-c o") #'org-searcher-search-view)
+    (global-set-key (kbd "C-c o") #'org-ivy-search-view)
 ```
 
 # Features
