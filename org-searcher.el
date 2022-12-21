@@ -1,4 +1,4 @@
-;;; org-searcher.el --- Incremental org-search-view -*- lexical-binding: t; -*-
+;;; org-searcher.el --- Full text search for org files powered by ivy -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 Huming Chen
 
@@ -26,7 +26,7 @@
 
 ;;; Commentary:
 ;;
-;; Incremental org-search-view
+;; Full text search for org files powered by ivy
 ;;
 ;; Below are commands you can use:
 ;; `org-searcher-search-view'
@@ -206,10 +206,4 @@ Otherwise, get the symbol at point, as a string."
 
 
 (provide 'org-searcher)
-
-;; Local Variables:
-;; coding: utf-8
-;; indent-tabs-mode: nil
-;; End:
-
 ;;; org-searcher.el ends here
