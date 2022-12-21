@@ -119,8 +119,7 @@ Otherwise, get the symbol at point, as a string."
       (progn
         ;; use fuzzy matching
         (setq string (replace-regexp-in-string " +" ".*" string))
-        (let (files rtnall index ivy-search-index-to-item-alist
-                    file ee beg beg1 end txt rtn)
+        (let (files rtnall index file ee beg beg1 end txt rtn)
           (catch 'exit
             (setq files (org-agenda-files))
             ;; Uniquify files.  However, let `org-check-agenda-file' handle non-existent ones.
