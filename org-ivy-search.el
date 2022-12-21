@@ -139,7 +139,6 @@ Otherwise, get the symbol at point, as a string."
                 ;; search matched text
                 (with-temp-buffer
                   (insert-file-contents-literally file)
-                  (org-mode)
                   (with-syntax-table (org-search-syntax-table)
                     (let ((case-fold-search t))
                       (widen)
