@@ -6,7 +6,7 @@ Poor man's full-text search engine over org files powered by ivy.
 This package provides a function `org-ivy-search-view' which utilizes ivy to
 do a full text search over org files.
 
-# Usage
+# Configuration
 
 ```lisp
     (require 'org-ivy-search)
