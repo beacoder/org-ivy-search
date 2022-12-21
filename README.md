@@ -16,7 +16,7 @@ do a full text search over org files.
 # Features
 
 - [x] Full text search for org files.
-- [x] Incremental search.
+- [x] Search on-the-fly.
 
 # License
 
