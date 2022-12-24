@@ -7,7 +7,7 @@
 ;; Version: 0.1
 ;; Created: 2021-03-12
 ;; Keywords: convenience, tool, org
-;; Package-Requires: ((emacs "25.1") (ivy "0.10.0") (org "0.10.0") (beacon "1.3.3"))
+;; Package-Requires: ((emacs "25.1") (ivy "0.10.0") (org "0.10.0"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -34,7 +34,6 @@
 ;;; Code:
 
 (require 'ivy)
-(require 'beacon)
 (require 'org-agenda)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -101,7 +100,7 @@ Otherwise, get the symbol at point, as a string."
              (is-valid-nb (integerp line-nb)))
     (find-file-read-only-other-window file-name)
     (with-no-warnings (goto-line line-nb)
-                      (beacon-blink))
+                      (pulse-momentary-highlight-region (line-beginning-position) (line-end-position)))
     (unless (member
              (buffer-name (window-buffer))
              (mapcar (function buffer-name) org-ivy-search-previous-buffers))
