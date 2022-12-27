@@ -4,7 +4,7 @@
 
 ;; Author: Huming Chen <chenhuming@gmail.com>
 ;; URL: https://github.com/beacoder/org-ivy-search
-;; Version: 0.1
+;; Version: 0.1.1
 ;; Created: 2021-03-12
 ;; Keywords: convenience, tool, org
 ;; Package-Requires: ((emacs "25.1") (ivy "0.10.0") (org "0.10.0"))
@@ -30,6 +30,10 @@
 ;;
 ;; Below are commands you can use:
 ;; `org-ivy-search-view'
+
+;;; Change Log:
+;;
+;; 0.1.1 Use insert-file-contents to support chinese word. 
 
 ;;; Code:
 
@@ -136,7 +140,7 @@ Otherwise, get the symbol at point, as a string."
                 (org-check-agenda-file file)
                 ;; search matched text
                 (with-temp-buffer
-                  (insert-file-contents-literally file)
+                  (insert-file-contents file)
                   (with-syntax-table (org-search-syntax-table)
                     (let ((case-fold-search t))
                       (widen)
