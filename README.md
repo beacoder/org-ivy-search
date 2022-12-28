@@ -1,6 +1,6 @@
 # org-ivy-search
 
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](COPYING.md)
+[![MIT licensed](https://img.shields.io/badge/license-GPLv3-blue.svg)](COPYING.md)
 [![MELPA](https://melpa.org/packages/org-ivy-search-badge.svg)](https://melpa.org/#/org-ivy-search)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 
