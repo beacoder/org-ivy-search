@@ -20,7 +20,7 @@ do a full text search over org files.
 
 # Features
 
-- [x] Full text search over org files
+- [x] Full text search
 - [x] Search on the fly
 - [x] Fuzzy matching
 
