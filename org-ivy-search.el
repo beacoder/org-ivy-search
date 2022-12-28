@@ -33,7 +33,7 @@
 
 ;;; Change Log:
 ;;
-;; 0.1.1 Use insert-file-contents to support chinese word. 
+;; 0.1.1 Use insert-file-contents to support chinese word.
 
 ;;; Code:
 
