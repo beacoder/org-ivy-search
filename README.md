@@ -18,6 +18,10 @@ do a full text search over org files.
     (global-set-key (kbd "C-c o") #'org-ivy-search-view)
 ```
 
+# Screenshots
+
+![org-ivy-search-screenshot.gif](org-ivy-search-screenshot.gif)
+
 # Features
 
 - [x] Full text search
