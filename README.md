@@ -2,6 +2,7 @@
 
 [![MIT licensed](https://img.shields.io/badge/license-GPLv3-blue.svg)](COPYING.md)
 [![MELPA](https://melpa.org/packages/org-ivy-search-badge.svg)](https://melpa.org/#/org-ivy-search)
+[![MELPA Stable](https://stable.melpa.org/packages/org-ivy-search-badge.svg)](https://stable.melpa.org/#/org-ivy-search)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 
 Poor man's full-text search engine over org files powered by ivy.
