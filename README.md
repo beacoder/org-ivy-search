@@ -25,7 +25,7 @@ do a full text search over org files.
 # Features
 
 - [x] Full text search
-- [x] Search on the fly
+- [x] Search on-the-fly
 - [x] Fuzzy matching
 
 # License
