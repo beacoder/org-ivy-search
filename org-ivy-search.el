@@ -1,6 +1,6 @@
 ;;; org-ivy-search.el --- Full text search for org files powered by ivy -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021-2022 Huming Chen
+;; Copyright (C) 2021-2023 Huming Chen
 
 ;; Author: Huming Chen <chenhuming@gmail.com>
 ;; URL: https://github.com/beacoder/org-ivy-search
