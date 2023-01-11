@@ -152,21 +152,11 @@ Otherwise, get the symbol at point, as a string."
                       ;; real match happens here
                       (while (re-search-forward string nil t)
                         (org-back-to-heading t)
-                        (while (and (not (zerop org-agenda-search-view-max-outline-level))
-                                    (> (org-reduced-level (org-outline-level))
-                                       org-agenda-search-view-max-outline-level)
-                                    (forward-line -1)
-                                    (org-back-to-heading t)))
                         (skip-chars-forward "* ")
                         (setq beg (point-at-bol)
                               beg1 (point)
                               end (progn
                                     (outline-next-heading)
-                                    (while (and (not (zerop org-agenda-search-view-max-outline-level))
-                                                (> (org-reduced-level (org-outline-level))
-                                                   org-agenda-search-view-max-outline-level)
-                                                (forward-line 1)
-                                                (outline-next-heading)))
                                     (point)))
                         (goto-char beg)
                         ;; save found text and its location
