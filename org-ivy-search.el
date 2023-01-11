@@ -110,7 +110,7 @@ Otherwise, get the symbol at point, as a string."
              (is-valid-file (file-exists-p file-name))
              (is-valid-nb (integerp line-nb)))
     (find-file-read-only-other-window file-name)
-    (with-no-warnings (goto-line line-nb)
+    (with-no-warnings (forward-line (1- line-nb))
                       (pulse-momentary-highlight-region (line-beginning-position) (line-end-position)))
     (unless (member
              (buffer-name (window-buffer))
@@ -198,7 +198,7 @@ Otherwise, get the symbol at point, as a string."
     (remove-hook 'minibuffer-exit-hook #'org-ivy-search-quit)
     (set-window-configuration configuration)
     (select-window selected-window)
-    (goto-line org-ivy-search-selected-window-line-nb)
+    (forward-line (1- org-ivy-search-selected-window-line-nb))
     (mapc 'kill-buffer-if-not-modified org-ivy-search-created-buffers)
     (setq org-ivy-search-created-buffers ()
           org-ivy-search-index-to-item-alist nil)))
