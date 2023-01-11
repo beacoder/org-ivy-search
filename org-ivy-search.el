@@ -4,7 +4,7 @@
 
 ;; Author: Huming Chen <chenhuming@gmail.com>
 ;; URL: https://github.com/beacoder/org-ivy-search
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; Created: 2021-03-12
 ;; Keywords: convenience, tool, org
 ;; Package-Requires: ((emacs "25.1") (ivy "0.10.0") (org "0.10.0"))
@@ -34,6 +34,7 @@
 ;;; Change Log:
 ;;
 ;; 0.1.1 Use insert-file-contents to support chinese word.
+;; 0.1.2 Don't limit agenda view by outline level
 
 ;;; Code:
 
@@ -88,7 +89,7 @@ Otherwise, get the symbol at point, as a string."
     (advice-add 'ivy-previous-line :after #'org-ivy-search-iterate-action)
     (advice-add 'ivy-next-line :after #'org-ivy-search-iterate-action)
     (add-hook 'minibuffer-exit-hook #'org-ivy-search-quit)
-    (ivy-read "Org agenda search: " #'org-ivy-search-agenda-search-function
+    (ivy-read "Org ivy search: " #'org-ivy-search-function
               :initial-input keyword
               :dynamic-collection t
               :caller #'org-ivy-search-view
@@ -116,7 +117,7 @@ Otherwise, get the symbol at point, as a string."
     (org-ivy-search-visit-agenda-location location)))
 
 ;; modified from org-search-view
-(defun org-ivy-search-agenda-search-function (string)
+(defun org-ivy-search-function (string)
   "Show all entries in agenda files that contain STRING."
   (or (ivy-more-chars)
       (progn
