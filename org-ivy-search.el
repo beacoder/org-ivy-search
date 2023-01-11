@@ -34,7 +34,7 @@
 ;;; Change Log:
 ;;
 ;; 0.1.1 Use insert-file-contents to support chinese word.
-;; 0.1.2 Don't limit agenda view by outline level
+;; 0.1.2 Don't limit search view by org outline level
 
 ;;; Code:
 
