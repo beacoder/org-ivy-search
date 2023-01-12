@@ -199,6 +199,7 @@ Otherwise, get the symbol at point, as a string."
     (remove-hook 'minibuffer-exit-hook #'org-ivy-search-quit)
     (set-window-configuration configuration)
     (select-window selected-window)
+    (goto-char (point-min))
     (forward-line (1- org-ivy-search-selected-window-line-nb))
     (mapc 'kill-buffer-if-not-modified org-ivy-search-created-buffers)
     (setq org-ivy-search-created-buffers ()
