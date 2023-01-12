@@ -110,7 +110,7 @@ Otherwise, get the symbol at point, as a string."
              (is-valid-file (file-exists-p file-name))
              (is-valid-nb (integerp line-nb)))
     (find-file-read-only-other-window file-name)
-    (with-no-warnings (forward-line (1- line-nb))
+    (with-no-warnings (goto-line line-nb) ;; don't use forward-line, it's not working well here
                       (pulse-momentary-highlight-region (line-beginning-position) (line-end-position)))
     (unless (member
              (buffer-name (window-buffer))
