@@ -201,7 +201,7 @@ Otherwise, get the symbol at point, as a string."
     (remove-hook 'minibuffer-exit-hook #'org-ivy-search-quit)
     (set-window-configuration configuration)
     (select-window selected-window)
-    (goto-char (org-ivy-search-selected-window-position))
+    (goto-char org-ivy-search-selected-window-position)
     (mapc 'kill-buffer-if-not-modified org-ivy-search-created-buffers)
     (setq org-ivy-search-created-buffers ()
           org-ivy-search-index-to-item-alist nil)))
