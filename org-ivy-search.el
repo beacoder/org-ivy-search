@@ -186,6 +186,7 @@ Otherwise, get the symbol at point, as a string."
   "Preview agenda content while looping agenda, ignore ARG."
   (save-selected-window
     (ignore arg)
+    (deactivate-mark)
     (when-let ((is-map-valid org-ivy-search-index-to-item-alist)
                (item-found (assoc ivy--index org-ivy-search-index-to-item-alist))
                (item-content (cdr item-found))
