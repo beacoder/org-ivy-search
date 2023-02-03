@@ -203,7 +203,8 @@ Otherwise, get the symbol at point, as a string."
     (set-window-configuration configuration)
     (select-window selected-window)
     (goto-char org-ivy-search-selected-window-position)
-    (mapc 'kill-buffer-if-not-modified org-ivy-search-created-buffers)
+    (cl-loop for buffer in org-ivy-search-created-buffers
+             do (kill-buffer-if-not-modified buffer))
     (setq org-ivy-search-created-buffers ()
           org-ivy-search-index-to-item-alist nil)))
 
