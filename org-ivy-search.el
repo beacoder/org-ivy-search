@@ -4,7 +4,7 @@
 
 ;; Author: Huming Chen <chenhuming@gmail.com>
 ;; URL: https://github.com/beacoder/org-ivy-search
-;; Version: 0.1.4
+;; Version: 0.1.5
 ;; Created: 2021-03-12
 ;; Keywords: convenience, tool, org
 ;; Package-Requires: ((emacs "25.1") (ivy "0.10.0") (org "0.10.0"))
@@ -38,6 +38,7 @@
 ;; 0.1.3 Advice ivy-set-index/ivy--exhibit instead of ivy-previous-line/ivy-next-line
 ;;       Restore previous window line-number as well
 ;; 0.1.4 Restore previous cursor position
+;; 0.1.5 Replace mapc/mapcar with cl-loop to improve performance
 
 ;;; Code:
 
