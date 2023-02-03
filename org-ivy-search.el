@@ -116,7 +116,8 @@ Otherwise, get the symbol at point, as a string."
                       (pulse-momentary-highlight-region (line-beginning-position) (line-end-position)))
     (unless (member
              (buffer-name (window-buffer))
-             (mapcar (function buffer-name) org-ivy-search-previous-buffers))
+             (cl-loop for buffer in org-ivy-search-previous-buffers
+                      collect (buffer-name buffer)))
       (add-to-list 'org-ivy-search-created-buffers (window-buffer)))))
 
 (defun org-ivy-search-action (agenda-location)
