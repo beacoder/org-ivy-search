@@ -4,10 +4,10 @@
 
 ;; Author: Huming Chen <chenhuming@gmail.com>
 ;; URL: https://github.com/beacoder/org-ivy-search
-;; Version: 0.1.5
+;; Version: 0.1.6
 ;; Created: 2021-03-12
 ;; Keywords: convenience, tool, org
-;; Package-Requires: ((emacs "25.1") (ivy "0.10.0") (org "0.10.0"))
+;; Package-Requires: ((emacs "25.1") (ivy "0.10.0") (org "0.10.0") (beacon "1.3.4"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -39,11 +39,13 @@
 ;;       Restore previous window line-number as well
 ;; 0.1.4 Restore previous cursor position
 ;; 0.1.5 Replace mapc/mapcar with cl-loop to improve performance
+;; 0.1.6 Flash visited file location with beacon
 
 ;;; Code:
 
 (require 'ivy)
 (require 'org-agenda)
+(require 'beacon)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition
@@ -113,7 +115,8 @@ Otherwise, get the symbol at point, as a string."
              (is-valid-nb (integerp line-nb)))
     (find-file-read-only-other-window file-name)
     (with-no-warnings (goto-char (point-min))
-                      (forward-line (1- line-nb)))
+                      (forward-line (1- line-nb))
+                      (beacon-blink))
     (unless (member
              (buffer-name (window-buffer))
              (cl-loop for buffer in org-ivy-search-previous-buffers
