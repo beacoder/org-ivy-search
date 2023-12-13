@@ -40,6 +40,7 @@
 ;; 0.1.4 Restore previous cursor position
 ;; 0.1.5 Replace mapc/mapcar with cl-loop to improve performance
 ;; 0.1.6 Flash visited file location with beacon
+;; 0.1.7 When visiting file, hide other windows temporarily
 
 ;;; Code:
 
@@ -114,6 +115,7 @@ Otherwise, get the symbol at point, as a string."
              (is-valid-file (file-exists-p file-name))
              (is-valid-nb (integerp line-nb)))
     (find-file-read-only-other-window file-name)
+    (delete-other-windows)
     (with-no-warnings (goto-char (point-min))
                       (forward-line (1- line-nb))
                       (beacon-blink))
