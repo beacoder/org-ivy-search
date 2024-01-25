@@ -31,3 +31,17 @@ do a full text search over org files.
 # License
 
 [LICENSE](LICENSE). Copyright (c) 2022-2023 Huming Chen <chenhuming@gmail.com>
+
+## Donate
+
+If you think the it's helpful for you, please consider paying a cup of coffee
+for me. Thank you! :smile:
+
+<img
+src="WeChatQR.jpg"
+alt="Wechat Pay" width="120"/>
+
+<a href="https://www.buymeacoffee.com/s9giES1" target="_blank">
+<img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee"
+width="160"/>
+</a>
