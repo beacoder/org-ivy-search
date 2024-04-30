@@ -1,6 +1,7 @@
 # org-ivy-search
 
 [![MIT licensed](https://img.shields.io/badge/license-GPLv3-blue.svg)](COPYING.md)
+[![Build Status](https://github.com/beacoder/org-ivy-search/workflows/CI/badge.svg)](https://github.com/beacoder/org-ivy-search/actions)
 [![MELPA](https://melpa.org/packages/org-ivy-search-badge.svg)](https://melpa.org/#/org-ivy-search)
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 
