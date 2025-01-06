@@ -31,4 +31,4 @@ do a full text search over org files.
 
 # License
 
-[LICENSE](LICENSE). Copyright (c) 2022-2024 Huming Chen <chenhuming@gmail.com>
+[LICENSE](LICENSE). Copyright (c) 2022-2025 Huming Chen <chenhuming@gmail.com>
