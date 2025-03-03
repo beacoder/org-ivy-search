@@ -155,6 +155,7 @@ Otherwise, get the symbol at point, as a string."
                 (org-check-agenda-file file)
                 ;; search matched text
                 (with-temp-buffer
+                  (org-mode)
                   (insert-file-contents file)
                   (with-syntax-table (org-search-syntax-table)
                     (let ((case-fold-search t))
