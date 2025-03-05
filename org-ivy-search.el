@@ -136,7 +136,7 @@ Otherwise, get the symbol at point, as a string."
   (or (ivy-more-chars)
       (progn
         ;; use fuzzy matching
-        (setq string (replace-regexp-in-string " +" ".*" string))
+        (setq string (replace-regexp-in-string "\s+" ".*" string))
         (let (files rtnall index file ee beg beg1 end txt rtn)
           (catch 'exit
             (setq files (org-agenda-files))
