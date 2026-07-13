@@ -1,10 +1,10 @@
 ;;; org-ivy-search.el --- Full text search for org files powered by ivy -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021-2025 Huming Chen
+;; Copyright (C) 2021-2026 Huming Chen
 
 ;; Author: Huming Chen <chenhuming@gmail.com>
 ;; URL: https://github.com/beacoder/org-ivy-search
-;; Version: 0.1.6
+;; Version: 0.1.8
 ;; Created: 2021-03-12
 ;; Keywords: convenience, tool, org
 ;; Package-Requires: ((emacs "25.1") (ivy "0.10.0") (org "0.10.0") (beacon "1.3.4"))
@@ -41,6 +41,7 @@
 ;; 0.1.5 Replace mapc/mapcar with cl-loop to improve performance
 ;; 0.1.6 Flash visited file location with beacon
 ;; 0.1.7 When visiting file, hide other windows temporarily
+;; 0.1.8 Fix deprecated functions, regex safety, dedup headings, performance
 
 ;;; Code:
 
@@ -92,42 +93,41 @@ Otherwise, get the symbol at point, as a string."
 (defun org-ivy-search-view (&optional keyword)
   "Incremental `org-search-view' with initial-input KEYWORD."
   (interactive (list (org-ivy-search--dwim-at-point)))
-  (let ((org-ivy-search-window-configuration (current-window-configuration))
-        (org-ivy-search-selected-window (frame-selected-window))
-        (org-ivy-search-selected-window-position (point))
-        (org-ivy-search-created-buffers ())
-        (org-ivy-search-previous-buffers (buffer-list)))
-    (advice-add 'ivy-set-index :after #'org-ivy-search-iterate-action)
-    (advice-add 'ivy--exhibit :after #'org-ivy-search-iterate-action)
-    (add-hook 'minibuffer-exit-hook #'org-ivy-search-quit)
-    (ivy-read "Org ivy search: " #'org-ivy-search-function
-              :initial-input keyword
-              :dynamic-collection t
-              :caller #'org-ivy-search-view
-              :action #'org-ivy-search-action)))
+  (setq org-ivy-search-window-configuration (current-window-configuration)
+        org-ivy-search-selected-window (frame-selected-window)
+        org-ivy-search-selected-window-position (point)
+        org-ivy-search-created-buffers ()
+        org-ivy-search-previous-buffers (buffer-list))
+  (advice-add 'ivy-set-index :after #'org-ivy-search-iterate-action)
+  (advice-add 'ivy--exhibit :after #'org-ivy-search-iterate-action)
+  (add-hook 'minibuffer-exit-hook #'org-ivy-search-quit)
+  (ivy-read "Org ivy search: " #'org-ivy-search-function
+            :initial-input keyword
+            :dynamic-collection t
+            :caller #'org-ivy-search-view
+            :action #'org-ivy-search-action))
 
 (defun org-ivy-search-visit-agenda-location (agenda-location)
-  "Visit agenda location AGENDA-LOCATION."
-  (when-let ((temp-split (split-string agenda-location ":"))
-             (file-name (car temp-split))
-             (line-nb-str (cadr temp-split))
-             (line-nb (string-to-number line-nb-str))
-             (is-valid-file (file-exists-p file-name))
-             (is-valid-nb (integerp line-nb)))
-    (find-file-read-only-other-window file-name)
-    (delete-other-windows)
-    (with-no-warnings (goto-char (point-min))
-                      (forward-line (1- line-nb))
-                      (beacon-blink))
-    (unless (member
-             (buffer-name (window-buffer))
-             (cl-loop for buffer in org-ivy-search-previous-buffers
-                      collect (buffer-name buffer)))
-      (add-to-list 'org-ivy-search-created-buffers (window-buffer)))))
+  "Visit agenda location AGENDA-LOCATION.
+AGENDA-LOCATION is formatted as \"filepath:line-number\"."
+  (when-let* ((last-colon (string-match-p ":[0-9]+\\'" agenda-location))
+              (file-name (substring agenda-location 0 last-colon))
+              (line-nb (string-to-number (substring agenda-location (1+ last-colon)))))
+    (when (and (> line-nb 0) (file-exists-p file-name))
+      (find-file-read-only-other-window file-name)
+      (delete-other-windows)
+      (goto-char (point-min))
+      (forward-line (1- line-nb))
+      (beacon-blink)
+      (unless (member
+               (buffer-name (window-buffer))
+               (cl-loop for buffer in org-ivy-search-previous-buffers
+                        collect (buffer-name buffer)))
+        (add-to-list 'org-ivy-search-created-buffers (window-buffer))))))
 
 (defun org-ivy-search-action (agenda-location)
   "Go to AGENDA-LOCATION."
-  (when-let ((location (get-text-property 0 'location agenda-location)))
+  (when-let* ((location (get-text-property 0 'location agenda-location)))
     (org-ivy-search-visit-agenda-location location)))
 
 ;; modified from org-search-view
@@ -135,8 +135,11 @@ Otherwise, get the symbol at point, as a string."
   "Show all entries in agenda files that contain STRING."
   (or (ivy-more-chars)
       (progn
-        ;; use fuzzy matching
-        (setq string (replace-regexp-in-string "\s+" ".*" string))
+        ;; Use fuzzy matching: quote each word to avoid regex injection,
+        ;; then join with .* for fuzzy behavior.
+        (setq string (mapconcat #'regexp-quote
+                                (split-string string "[[:space:]]+" t)
+                                ".*"))
         (let (files rtnall index file ee beg beg1 end txt rtn)
           (catch 'exit
             (setq files (org-agenda-files))
@@ -155,8 +158,8 @@ Otherwise, get the symbol at point, as a string."
                 (org-check-agenda-file file)
                 ;; search matched text
                 (with-temp-buffer
-                  (org-mode)
                   (insert-file-contents file)
+                  (delay-mode-hooks (org-mode))
                   (with-syntax-table (org-search-syntax-table)
                     (let ((case-fold-search t))
                       (widen)
@@ -169,7 +172,7 @@ Otherwise, get the symbol at point, as a string."
                       (while (re-search-forward string nil t)
                         (org-back-to-heading t)
                         (skip-chars-forward "* ")
-                        (setq beg (point-at-bol)
+                        (setq beg (line-beginning-position)
                               beg1 (point)
                               end (progn
                                     (outline-next-heading)
@@ -177,13 +180,14 @@ Otherwise, get the symbol at point, as a string."
                         (goto-char beg)
                         ;; save found text and its location
                         (setq txt
-                              (propertize (buffer-substring-no-properties beg1 (point-at-eol))
+                              (propertize (buffer-substring-no-properties beg1 (line-end-position))
                                           'location (format "%s:%d" file (line-number-at-pos beg))))
                         ;; save in map
                         (push (cons index txt) org-ivy-search-index-to-item-alist)
                         ;; save as return value
                         (push txt ee)
-                        (goto-char (1- end))
+                        ;; Skip past this entire heading to avoid duplicates
+                        (goto-char end)
                         (setq index (1+ index)))))))
               (setq rtn (nreverse ee))
               (setq rtnall (append rtnall rtn)))
@@ -194,10 +198,10 @@ Otherwise, get the symbol at point, as a string."
   (save-selected-window
     (ignore arg)
     (deactivate-mark)
-    (when-let ((is-map-valid org-ivy-search-index-to-item-alist)
-               (item-found (assoc ivy--index org-ivy-search-index-to-item-alist))
-               (item-content (cdr item-found))
-               (location (get-text-property 0 'location item-content)))
+    (when-let* ((is-map-valid org-ivy-search-index-to-item-alist)
+                (item-found (assoc ivy--index org-ivy-search-index-to-item-alist))
+                (item-content (cdr item-found))
+                (location (get-text-property 0 'location item-content)))
       (org-ivy-search-visit-agenda-location location))))
 
 (defun org-ivy-search-quit ()
